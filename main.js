@@ -7,9 +7,40 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(csvData => {
             const parsedData = parseCSV(csvData);
             globalData = getRandomSample(parsedData, 60);
+            renderChart(scatterFunc, globalData);
         })
 });
 
+
+
+// A function to render the chart
+// It takes a specification function and data as arguments
+function renderChart(specFunction, data) {
+    const container = document.getElementById("chart-container");
+    container.innerHTML = ''; // Optional: clear previous chart
+    const spec = specFunction(data);
+    spec.width = 800;
+    spec.height = 400;
+    spec.autosize = { type: "fit", contains: "padding" };
+    vegaEmbed('#chart-container', spec, { actions: false });
+};
+
+// Function to create a Vega-Lite scatter plot specification
+function scatterFunc(data) {
+    return {
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+        "description": "A scatter plot with embedded data.",
+        "data": {
+            "values": data
+        },
+        "mark": "point",
+        "encoding": {
+            "x": { "field": "tempo", "type": "quantitative" },
+            "y": { "field": "danceability", "type": "quantitative" },
+            "color": { "field": "playlist_genre", "type": "nominal" }
+        }
+    };
+};
 
 
 // Function to parse CSV data into an array of objects
