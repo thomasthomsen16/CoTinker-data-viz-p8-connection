@@ -6,8 +6,9 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.text())
         .then(csvData => {
             const parsedData = parseCSV(csvData);
-            globalData = getRandomSample(parsedData, 60);
+            globalData = getRandomSample(parsedData, 20);
             renderChart(scatterFunc, globalData);
+            populateTable(globalData);
         })
 });
 
@@ -75,6 +76,36 @@ function parseCSV(csvData) {
 
         return parsedRow;
     }).filter(row => row !== null);
+}
+
+//Function to populate the table with data
+function populateTable(data) {
+    const tbody = document.getElementById("data-table-body");
+    tbody.innerHTML = ""; // Clear existing rows
+
+    data.forEach(row => {
+        const tr = document.createElement("tr");
+
+        const fields = [
+            "tempo",
+            "danceability",
+            "energy",
+            "valence",
+            "speechiness",
+            "instrumentalness",
+            "duration_ms",
+            "liveness",
+            "release_year"
+        ];
+
+        fields.forEach(field => {
+            const td = document.createElement("td");
+            td.textContent = row[field] !== undefined ? row[field] : "";
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
 }
 
 
