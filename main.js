@@ -26,22 +26,34 @@ function renderChart(specFunction, data) {
     vegaEmbed('#chart-container', spec, { actions: false });
 };
 
-// Function to create a Vega-Lite scatter plot specification
 function scatterFunc(data) {
     return {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-        "description": "A scatter plot with embedded data.",
+        "description": "A scatter plot with interactive selection.",
         "data": {
             "values": data
+        },
+        "selection": {
+            "brush": {
+                "type": "interval",
+                "encodings": ["x", "y"]  // Brushing in both axes
+            }
         },
         "mark": "point",
         "encoding": {
             "x": { "field": "tempo", "type": "quantitative" },
             "y": { "field": "danceability", "type": "quantitative" },
-            "color": { "field": "playlist_genre", "type": "nominal" }
+            "color": {
+                "condition": {
+                    "selection": "brush",  // Color only if selected
+                    "field": "playlist_genre",
+                    "type": "nominal"
+                },
+                "value": "lightgray"  // Color for unselected points
+            }
         }
     };
-};
+}
 
 
 // Function to parse CSV data into an array of objects
